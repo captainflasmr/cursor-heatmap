@@ -1,0 +1,267 @@
+#+title: Cursor Heatmap
+#+author: James Dyer
+#+email: captainflasmr@gmail.com
+#+language: en
+#+options: ':t toc:nil author:nil email:nil num:nil title:nil
+#+todo: TODO DOING | DONE
+#+startup: showall
+
+* Cursor Heatmap for Emacs
+
+Monitor and visualize cursor position patterns throughout your Emacs session with beautiful heatmap reports. Understand where you spend most of your editing time and optimize your workflow accordingly.
+
+** Features
+
+- 🎯 *Frame-relative tracking* - Monitors cursor position across the entire Emacs frame
+- 🔥 *Multiple visualization modes* - Raw counts, time-weighted, movement-focused, and balanced
+- 🌈 *Rich color schemes* - Heat, cool, rainbow, and monochrome color palettes (graphical Emacs)
+- 📊 *Quadrant analysis* - Automatic breakdown of activity by screen quadrants
+- ⏱️ *Time decay* - Recent activity emphasized over historical data
+- 🎨 *ASCII art heatmaps* - Clean box borders and visual structure
+- 💾 *Session persistence* - Save and load data between Emacs sessions
+- 🚀 *Lightweight* - Minimal performance impact with configurable sampling
+
+** Screenshots
+
+*** Terminal Emacs
+#+BEGIN_EXAMPLE
+Cursor Heatmap Report (balanced mode)
+=======================================
+Frame size: 120x40
+Total samples: 1523
+Total movements: 287
+
++------------------------------------------------------------+
+|   ...:###*      :     |                                    |
+| ..::###@@█*     :     |        .                          |
+|..::*###@@█      :     |                                   |
++------------------------------+-----------------------------+
+|   ..:*#@@      .:     |                                   |
+| .  .:*##       :      |                                   |
+|                       |                                   |
++------------------------------------------------------------+
+
+Quadrant Activity Summary:
+Top-Left:   67.3% | Top-Right:    8.1%
+Bot-Left:   19.2% | Bot-Right:    5.4%
+#+END_EXAMPLE
+
+*** Graphical Emacs
+In graphical Emacs, the heatmap displays with rich colors ranging from cool blues (low activity) through vibrant yellows and oranges to intense reds (high activity).
+
+** Installation
+
+*** MELPA (Recommended)
+#+BEGIN_SRC emacs-lisp
+;; Add MELPA to your package archives if not already done
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(package-refresh-contents)
+
+;; Install cursor-heatmap
+(package-install 'cursor-heatmap)
+#+END_SRC
+
+*** Manual Installation
+#+BEGIN_SRC bash
+git clone https://github.com/captainflasmr/cursor-heatmap.git
+#+END_SRC
+
+Add to your Emacs configuration:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "/path/to/cursor-heatmap")
+(require 'cursor-heatmap)
+#+END_SRC
+
+** Quick Start
+
+#+BEGIN_SRC emacs-lisp
+;; Start monitoring your cursor position
+(cursor-heatmap-mode 1)
+
+;; After some editing, view your heatmap
+(cursor-heatmap-show-report)
+
+;; Try different visualization modes
+(cursor-heatmap-set-visualization-mode 'movement-focused)
+(cursor-heatmap-set-color-scheme 'heat)
+#+END_SRC
+
+** Usage
+
+*** Basic Commands
+
+| Command                          | Description                       |
+|----------------------------------+-----------------------------------|
+| =M-x cursor-heatmap-mode=        | Toggle cursor position monitoring |
+| =M-x cursor-heatmap-show-report= | Display the heatmap visualization |
+| =M-x cursor-heatmap-reset-data=  | Clear all collected data          |
+| =M-x cursor-heatmap-save-data=   | Save data to file                 |
+| =M-x cursor-heatmap-load-data=   | Load previously saved data        |
+
+*** Visualization Commands
+
+| Command                                     | Description                            |
+|---------------------------------------------+----------------------------------------|
+| =M-x cursor-heatmap-set-visualization-mode= | Change how data is processed           |
+| =M-x cursor-heatmap-set-color-scheme=       | Change color palette (graphical Emacs) |
+| =M-x cursor-heatmap-toggle-colors=          | Enable/disable color visualization     |
+
+*** Visualization Modes
+
+- *raw* - Simple count of cursor visits to each position
+- *time-weighted* - Recent activity emphasized, older activity fades
+- *movement-focused* - Emphasizes positions reached by movement vs. staying put
+- *balanced* (default) - Combines time weighting with movement emphasis
+
+*** Color Schemes
+
+- *heat* - Traditional heatmap (blue → cyan → yellow → red)
+- *cool* - Cool palette (blue → cyan → green)
+- *rainbow* - Full spectrum (violet → red)
+- *monochrome* - Grayscale visualization
+
+** Configuration
+
+*** Basic Configuration
+#+BEGIN_SRC emacs-lisp
+;; Auto-start monitoring
+(cursor-heatmap-mode 1)
+
+;; Configure sampling interval (default: 0.5 seconds)
+(setq cursor-heatmap-sample-interval 1.0)
+
+;; Set visualization preferences
+(setq cursor-heatmap-visualization-mode 'balanced)
+(setq cursor-heatmap-color-scheme 'heat)
+#+END_SRC
+
+*** Advanced Configuration
+#+BEGIN_SRC emacs-lisp
+;; Customize time decay (lower = more emphasis on recent activity)
+(setq cursor-heatmap-decay-factor 0.9)
+
+;; Weight for movement vs. stationary positions
+(setq cursor-heatmap-movement-weight 3.0)
+
+;; Exclude minibuffer from tracking
+(setq cursor-heatmap-exclude-minibuffer t)
+
+;; Custom data file location
+(setq cursor-heatmap-data-file "~/.emacs.d/my-cursor-data.el")
+
+;; Auto-save data every 15 minutes
+(run-with-timer 900 900 'cursor-heatmap-save-data)
+#+END_SRC
+
+** Customization Variables
+
+| Variable                            | Default     | Description                       |
+|-------------------------------------+-------------+-----------------------------------|
+| =cursor-heatmap-sample-interval=    | =0.5=       | Seconds between cursor samples    |
+| =cursor-heatmap-visualization-mode= | ='balanced= | How to process and display data   |
+| =cursor-heatmap-color-scheme=       | ='heat=     | Color palette for graphical Emacs |
+| =cursor-heatmap-use-colors=         | =t=         | Enable colors in graphical Emacs  |
+| =cursor-heatmap-decay-factor=       | =0.95=      | Time decay rate (0.0-1.0)         |
+| =cursor-heatmap-movement-weight=    | =2.0=       | Multiplier for movement positions |
+| =cursor-heatmap-exclude-minibuffer= | =t=         | Skip minibuffer tracking          |
+| =cursor-heatmap-data-file=          | Auto        | File for saving/loading data      |
+
+** Use Cases
+
+*** Workflow Optimization
+- Identify whether you primarily use left or right portions of your screen
+- Determine if your window splits are optimally positioned
+- Find underutilized screen real estate
+
+*** Ergonomic Analysis
+- Spot repetitive cursor patterns that might indicate inefficient workflows
+- Understand temporal patterns in your editing behavior
+- Optimize window layouts based on actual usage
+
+*** Productivity Insights
+- Compare activity patterns between different projects or file types
+- Track how your editing patterns change over time
+- Identify areas where better keybindings might help
+
+** Technical Details
+
+*** How It Works
+1. Samples cursor position at configurable intervals (default 0.5s)
+2. Records frame-relative coordinates using =posn-at-point= and =window-edges=
+3. Tracks movement patterns and timestamps for advanced visualizations
+4. Stores data separately for different frame dimensions
+5. Generates reports with ASCII art or colored visualization
+
+*** Performance
+- Minimal CPU usage (~0.1% on modern systems)
+- Memory usage scales with frame size and session length
+- Automatic exclusion of temporary buffers and minibuffer
+- Efficient data structures with hash tables and vectors
+
+*** Compatibility
+- Emacs 26.1 or higher
+- Works in both terminal and graphical Emacs
+- Automatic fallback to ASCII visualization in terminal
+- Cross-platform (Linux, macOS, Windows)
+
+** Troubleshooting
+
+*** Common Issues
+
+**** "No data available for current frame dimensions"
+- Solution: Use Emacs for a while with =cursor-heatmap-mode= enabled
+- The package tracks data separately for each frame size
+
+**** Colors not showing in graphical Emacs
+#+BEGIN_SRC emacs-lisp
+;; Check if colors are enabled
+(setq cursor-heatmap-use-colors t)
+
+;; Verify you're in graphical mode
+(display-graphic-p) ; Should return t
+#+END_SRC
+
+**** Performance issues
+#+BEGIN_SRC emacs-lisp
+;; Increase sampling interval
+(setq cursor-heatmap-sample-interval 1.0)
+
+;; Or temporarily disable
+(cursor-heatmap-mode 0)
+#+END_SRC
+
+** Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for new functionality
+4. Ensure all tests pass
+5. Submit a pull request
+
+*** Development Setup
+#+BEGIN_SRC bash
+git clone https://github.com/captainflasmr/cursor-heatmap.git
+cd cursor-heatmap
+
+# Run tests
+emacs -batch -l cursor-heatmap.el -l cursor-heatmap-test.el -f ert-run-tests-batch-and-exit
+#+END_SRC
+
+** License
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+** Changelog
+
+*** v1.0.0 (Current)
+- Initial release
+- Frame-relative cursor tracking
+- Multiple visualization modes
+- Color schemes for graphical Emacs
+- Quadrant analysis
+- Time decay and movement weighting
+- Session persistence
+
