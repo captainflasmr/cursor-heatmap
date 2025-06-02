@@ -13,13 +13,9 @@ Monitor and visualize cursor position patterns throughout your Emacs session wit
 ** Features
 
 - 🎯 *Frame-relative tracking* - Monitors cursor position across the entire Emacs frame
-- 🔥 *Multiple visualization modes* - Raw counts, time-weighted, movement-focused, and balanced
-- 🌈 *Rich color schemes* - Heat, cool, rainbow, and monochrome color palettes (graphical Emacs)
 - 📊 *Quadrant analysis* - Automatic breakdown of activity by screen quadrants
-- ⏱️ *Time decay* - Recent activity emphasized over historical data
 - 🎨 *ASCII art heatmaps* - Clean box borders and visual structure
 - 💾 *Session persistence* - Save and load data between Emacs sessions
-- 🚀 *Lightweight* - Minimal performance impact with configurable sampling
 
 ** Screenshots
 
@@ -47,6 +43,7 @@ Bot-Left:   19.2% | Bot-Right:    5.4%
 #+END_EXAMPLE
 
 *** Graphical Emacs
+
 In graphical Emacs, the heatmap displays with rich colors ranging from cool blues (low activity) through vibrant yellows and oranges to intense reds (high activity).
 
 ** Installation
@@ -82,9 +79,6 @@ Add to your Emacs configuration:
 ;; After some editing, view your heatmap
 (cursor-heatmap-show-report)
 
-;; Try different visualization modes
-(cursor-heatmap-set-visualization-mode 'movement-focused)
-(cursor-heatmap-set-color-scheme 'heat)
 #+END_SRC
 
 ** Usage
@@ -99,28 +93,6 @@ Add to your Emacs configuration:
 | =M-x cursor-heatmap-save-data=   | Save data to file                 |
 | =M-x cursor-heatmap-load-data=   | Load previously saved data        |
 
-*** Visualization Commands
-
-| Command                                     | Description                            |
-|---------------------------------------------+----------------------------------------|
-| =M-x cursor-heatmap-set-visualization-mode= | Change how data is processed           |
-| =M-x cursor-heatmap-set-color-scheme=       | Change color palette (graphical Emacs) |
-| =M-x cursor-heatmap-toggle-colors=          | Enable/disable color visualization     |
-
-*** Visualization Modes
-
-- *raw* - Simple count of cursor visits to each position
-- *time-weighted* - Recent activity emphasized, older activity fades
-- *movement-focused* - Emphasizes positions reached by movement vs. staying put
-- *balanced* (default) - Combines time weighting with movement emphasis
-
-*** Color Schemes
-
-- *heat* - Traditional heatmap (blue → cyan → yellow → red)
-- *cool* - Cool palette (blue → cyan → green)
-- *rainbow* - Full spectrum (violet → red)
-- *monochrome* - Grayscale visualization
-
 ** Configuration
 
 *** Basic Configuration
@@ -128,44 +100,21 @@ Add to your Emacs configuration:
 ;; Auto-start monitoring
 (cursor-heatmap-mode 1)
 
-;; Configure sampling interval (default: 0.5 seconds)
-(setq cursor-heatmap-sample-interval 1.0)
+;; Set grid preferences
+(setq cursor-heatmap-grid-width 20)
+(setq cursor-heatmap-grid-height 20)
+(setq cursor-heatmap-use-colors t))
 
-;; Set visualization preferences
-(setq cursor-heatmap-visualization-mode 'balanced)
-(setq cursor-heatmap-color-scheme 'heat)
 #+END_SRC
 
 *** Advanced Configuration
 #+BEGIN_SRC emacs-lisp
-;; Customize time decay (lower = more emphasis on recent activity)
-(setq cursor-heatmap-decay-factor 0.9)
-
-;; Weight for movement vs. stationary positions
-(setq cursor-heatmap-movement-weight 3.0)
-
 ;; Exclude minibuffer from tracking
 (setq cursor-heatmap-exclude-minibuffer t)
 
 ;; Custom data file location
 (setq cursor-heatmap-data-file "~/.emacs.d/my-cursor-data.el")
-
-;; Auto-save data every 15 minutes
-(run-with-timer 900 900 'cursor-heatmap-save-data)
 #+END_SRC
-
-** Customization Variables
-
-| Variable                            | Default     | Description                       |
-|-------------------------------------+-------------+-----------------------------------|
-| =cursor-heatmap-sample-interval=    | =0.5=       | Seconds between cursor samples    |
-| =cursor-heatmap-visualization-mode= | ='balanced= | How to process and display data   |
-| =cursor-heatmap-color-scheme=       | ='heat=     | Color palette for graphical Emacs |
-| =cursor-heatmap-use-colors=         | =t=         | Enable colors in graphical Emacs  |
-| =cursor-heatmap-decay-factor=       | =0.95=      | Time decay rate (0.0-1.0)         |
-| =cursor-heatmap-movement-weight=    | =2.0=       | Multiplier for movement positions |
-| =cursor-heatmap-exclude-minibuffer= | =t=         | Skip minibuffer tracking          |
-| =cursor-heatmap-data-file=          | Auto        | File for saving/loading data      |
 
 ** Use Cases
 
@@ -184,27 +133,6 @@ Add to your Emacs configuration:
 - Track how your editing patterns change over time
 - Identify areas where better keybindings might help
 
-** Technical Details
-
-*** How It Works
-1. Samples cursor position at configurable intervals (default 0.5s)
-2. Records frame-relative coordinates using =posn-at-point= and =window-edges=
-3. Tracks movement patterns and timestamps for advanced visualizations
-4. Stores data separately for different frame dimensions
-5. Generates reports with ASCII art or colored visualization
-
-*** Performance
-- Minimal CPU usage (~0.1% on modern systems)
-- Memory usage scales with frame size and session length
-- Automatic exclusion of temporary buffers and minibuffer
-- Efficient data structures with hash tables and vectors
-
-*** Compatibility
-- Emacs 26.1 or higher
-- Works in both terminal and graphical Emacs
-- Automatic fallback to ASCII visualization in terminal
-- Cross-platform (Linux, macOS, Windows)
-
 ** Troubleshooting
 
 *** Common Issues
@@ -220,15 +148,6 @@ Add to your Emacs configuration:
 
 ;; Verify you're in graphical mode
 (display-graphic-p) ; Should return t
-#+END_SRC
-
-**** Performance issues
-#+BEGIN_SRC emacs-lisp
-;; Increase sampling interval
-(setq cursor-heatmap-sample-interval 1.0)
-
-;; Or temporarily disable
-(cursor-heatmap-mode 0)
 #+END_SRC
 
 ** Contributing
@@ -253,15 +172,3 @@ emacs -batch -l cursor-heatmap.el -l cursor-heatmap-test.el -f ert-run-tests-bat
 ** License
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-** Changelog
-
-*** v1.0.0 (Current)
-- Initial release
-- Frame-relative cursor tracking
-- Multiple visualization modes
-- Color schemes for graphical Emacs
-- Quadrant analysis
-- Time decay and movement weighting
-- Session persistence
-
